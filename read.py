@@ -7,16 +7,12 @@ import os
 import glob
 
 
-#FULL_PATH = '/home/sanctus/projects/lama/nedbank_2018.pdf'
-
-
-
 def score(text: str) -> float:
     '''
     This will get me the score 
     '''
     r = Readability(text)
-    #flesch-kindcaid grade level
+    #flesch-kindcaid test
     fk =  r.flesch_kincaid()
     y = fk.score
     x = fk.grade_level
@@ -47,16 +43,12 @@ def get_text(path: str) -> None:
     cover = (analysed/numpages)*100
     s1, s2, s3 = concat(scoring)
     g1, g2, g3 = concat(grading)
-    #print('SCORE\n mean: {}\n max: {}\n min: {}\n analysed: {}%'.format(s1,s2,s3,cover))
-    #print('GRADE\n mean: {}\n max: {}\n min: {}\n analysed: {}%'.format(g1,g2,g3,cover))
     return s1,s2,s3,g1,g2,g3,cover
 
 def concat(values: list) -> float:
     '''
     This get the average, maximum and the minimum for the list recieved.
-    SHOULD FIX THE BUG BELOW AS MAKE FOR SURE THAT THE FUNCTION RECEIVES NUMBERS
     '''
-    #values = [i for float(i) in values]
     return (sum(values)/len(values)) , max(values),min(values)
 
 def baptise(path: str) -> str:
@@ -68,8 +60,6 @@ def baptise(path: str) -> str:
     y = nameyear.split('_')
     name = y[0]
     year = ((y[-1]).split('.'))[0]
-    print(name)
-    print(year)
     return name, year
 
 def sample(path: str) -> None:
@@ -79,11 +69,9 @@ def sample(path: str) -> None:
     smean, smax, smin, gmean, gmax, gmin, score = get_text(path)
     name, year = baptise(path)
     data = str(name)+','+str(year)+','+str(smean)+','+str(smax)+','+str(smin)+','+str(gmean)+','+str(gmax)+','+str(gmin)+','+str(score)+'\n'
-    print(data)
     file_object = open('sample.txt', 'a')
     file_object.write(data)
     file_object.close()
-    #print(data)
 
 def engine():
     mkdir = os.path.dirname(os.path.realpath(__file__))+"/*.pdf"
