@@ -49,7 +49,6 @@ def sample(path: str) -> None:
     '''
     For each report this function inserts the values on the file sample.txt
     '''
-    #smean, smax, smin, gmean, gmax, gmin, score = get_text(path)
     y = get_text(path)
     cover = y[1]
     score = list((sent(y[0])).values())
@@ -61,7 +60,6 @@ def sample(path: str) -> None:
     file_object.close()
 
 
-#[ ] LAST THING CHANGE
 def engine():
     mkdir = os.path.dirname(os.path.realpath(__file__))+"/*.pdf"
     names = [os.path.basename(x) for x in glob.glob(str(mkdir))]
