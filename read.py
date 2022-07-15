@@ -13,9 +13,12 @@ def score(text: str) -> float:
     '''
     r = Readability(text)
     #flesch-kindcaid test
-    fk =  r.flesch_kincaid()
+    #fk =  r.flesch_kincaid()
+    #Gunning fog index
+    fk = r.gunning_fog()
     y = fk.score
-    x = fk.grade_level
+    #I went ot their code and this is how they calculate the grade level by rounding the score.
+    x = round(y)
     print('This is the score: {}'.format(y))
     print('This is the grade level: {}'.format(x))
     return float(y),float(x)
@@ -37,6 +40,7 @@ def get_text(path: str) -> None:
         text = pageobj.extractText()
         if len(text.split())>100:
             analysed += 1
+            print('Page: {}'.format(i))
             y,x = score(text)
             scoring.append(y)
             grading.append(x)
