@@ -4,8 +4,9 @@ import numpy as np
 import re
 import os
 import glob
-from readability import Readability
-
+#THIS IS THE OLD LIBRARY
+#from readability import Readability
+import textstat
 """
 Lastest update: 24/10/2022
 Readme:
@@ -49,10 +50,14 @@ def read_score(text: str) -> float:
     numwords = len(text.split())
     if numwords>100:
         try:
-            r = Readability(text)
+            y = textstat.flesch_reading_ease(text)
+            #y = textstat.gunning_fog(text)
+
+            #THIS IS USING THE OLD LIBRARY
+            #r = Readability(text)
             #fk = r.flesch_kincaid() #FOR THE FLESH KINCAID TEST
-            fk = r.gunning_fog() #FOR THE GUNNING FOG TEST
-            y = fk.score
+            #fk = r.gunning_fog() #FOR THE GUNNING FOG TEST
+            #y = fk.score
             print('This is the score: ')
             return float(y), numwords
         except:

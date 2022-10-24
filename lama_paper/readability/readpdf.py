@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 import PyPDF2
-from readability import Readability
+
 import numpy as np
 import re
 import os
 import glob
+#THIS IS THE OLD LIBRARY
+#from readability import Readability
+import textstat
 """
 [] by page get the readability score from pdf file
 !does not get the full document text
@@ -16,10 +19,15 @@ def score(text: str) -> float:
     '''
     This will get me the score 
     '''
-    r = Readability(text)
+    #CHANGE THIS TO GET DIFFERENT SCORES
+    y = textstat.flesch_reading_ease(text)
+    #y = textstat.gunning_fog(text)
+
+    #THIS IS USING THE OLD LIBRARY
+    #r = Readability(text)
     #flesch-kindcaid test
-    fk =  r.gunning_fog()
-    y = fk.score
+    #fk =  r.gunning_fog()
+    #y = fk.score
     #x = fk.grade_level
     x = 0
     print('This is the score: {}'.format(y))
@@ -42,7 +50,7 @@ def get_text(path: str) -> None:
         pageobj = object.getPage(i)
         if pageobj.getContents()==None:
             continue
-           text = pageobj.extractText()
+        text = pageobj.extractText()
         if len(text.split())>100:
             #print(len(text.split()))
             #print(Readability(text).analyzedVars['word_cnt'])
