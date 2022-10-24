@@ -4,24 +4,18 @@ import numpy as np
 import re
 import os
 import glob
+import pysentiment2 as ps
 """
-[ ] makes the .txt files based on the text of the pdfs
-[ ] returns .txt files with company names
-"""
+Readme:
+[] get the full text from pdf
+[] apply the sentiment score to the whole document
 
+"""
 
 
 def get_text(path: str) -> list:
     '''
-    This will get the text from pdf by page and return text and document percentage covered
-
-    Args:
-        path (string): the pdf file location
-
-    Returns:
-        list[
-            final (string): txt that PyPDF2 was able to extract
-            cover (float): document percentage covered]
+    This will transform the pdf into text capable of the Readability library to read it
     '''
     object = PyPDF2.PdfFileReader(str(path))
     numpages = object.getNumPages()
@@ -37,19 +31,17 @@ def get_text(path: str) -> list:
         cover=0
     else:
         cover = (analysed/numpages)*100
-    print(final)
     return [final,cover] 
+
+def sent(text: str) -> dict:
+    lm = ps.LM()
+    tokens = lm.tokenize(text)
+    score = lm.get_score(tokens)
+    return score
 
 def baptise(path: str) -> str:
     '''
-    This get us the company and the year based on the file name as NAME_YEAR.pdf
-
-    Args:
-        path (string): the pdf file location
-
-    Returns:
-        name (string): firm name
-        year (string): report year
+    This get us the company and the year
     '''
     base = path.split('/')
     nameyear = base[-1]
@@ -61,36 +53,24 @@ def baptise(path: str) -> str:
 def sample(path: str) -> None:
     '''
     For each report this function inserts the values on the file sample.txt
-
-    Args: 
-        path (string): the pdf file location
-
-    Returns:
-        None - but creates a .txt file with the text extracted from the pdf
     '''
     y = get_text(path)
     cover = y[1]
-    #score = list((sent(y[0])).values())
+    score = list((sent(y[0])).values())
     name, year = baptise(path)
-    print('[+] '+str(name)+' '+str(year)+'___covered:'+str(cover))
-    file_name = '{}_{}'.format(name,year)
-    file_object = open(file_name, 'a', encoding="utf-8")
-    file_object.write(str(y[0]))
+    print('[+] '+str(name)+' '+str(year)+' score: '+str(score)+'___covered:'+str(cover))
+    data = str(name)+','+str(year)+','+str(score[0])+','+str(score[1])+','+str(score[2])+','+str(score[3])+','+str(cover)+'\n'
+    file_object = open('sample.txt', 'a')
+    file_object.write(data)
     file_object.close()
 
 
 def engine():
-    """
-    A loop that goes through all pdf files on the folder
-
-    Args:
-        None
-
-    Returns:
-        .txt file with text extracted from the pdf
-    """
     mkdir = os.path.dirname(os.path.realpath(__file__))+"/*.pdf"
     names = [os.path.basename(x) for x in glob.glob(str(mkdir))]
+    file_object = open('sample.txt', 'a')
+    file_object.write('firm,year,score_pos,score_neg,score_pol,score_sub,covered\n')
+    file_object.close()
     for j in names:
         sample(j)
 

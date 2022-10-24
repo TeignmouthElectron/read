@@ -4,8 +4,23 @@ import numpy as np
 import re
 import os
 import glob
-import pysentiment2 as ps
+from readability import Readability
 
+"""
+Lastest update: 24/10/2022
+Readme:
+
+[] get the full text from pdf
+[] apply the readability score to the whole document(string)
+[returns]
+	-  firm
+	-  year
+	- readability score
+	- number of pages
+	- number of words
+	- % convered
+
+"""
 
 
 def get_text(path: str) -> list:
@@ -26,13 +41,27 @@ def get_text(path: str) -> list:
         cover=0
     else:
         cover = (analysed/numpages)*100
-    return [final,cover] 
+    return [final,cover,numpages] 
 
-def sent(text: str) -> dict:
-    lm = ps.LM()
-    tokens = lm.tokenize(text)
-    score = lm.get_score(tokens)
-    return score
+def read_score(text: str) -> float:
+    # this has the try becauce sometimes even if it has more than 100 words the code is unable to yield a score
+    # PLEASE CHECK THIS INDIVIDUAL CASES IN DETAIL.
+    numwords = len(text.split())
+    if numwords>100:
+        try:
+            r = Readability(text)
+            #fk = r.flesch_kincaid() #FOR THE FLESH KINCAID TEST
+            fk = r.gunning_fog() #FOR THE GUNNING FOG TEST
+            y = fk.score
+            print('This is the score: ')
+            return float(y), numwords
+        except:
+            return ' ', numwords
+    else:
+        print('Report has less than 100 words (min to run readability test)')
+        return ' ', numwords
+
+
 
 def baptise(path: str) -> str:
     '''
@@ -51,10 +80,12 @@ def sample(path: str) -> None:
     '''
     y = get_text(path)
     cover = y[1]
-    score = list((sent(y[0])).values())
+    number_pages = y[2]
+    score = read_score(y[0])[0]
+    number_words = read_score(y[0])[1]
     name, year = baptise(path)
     print('[+] '+str(name)+' '+str(year)+' score: '+str(score)+'___covered:'+str(cover))
-    data = str(name)+','+str(year)+','+str(score[0])+','+str(score[1])+','+str(score[2])+','+str(score[3])+','+str(cover)+'\n'
+    data = str(name)+','+str(year)+','+str(score)+','+str(number_pages)+','+str(number_words)+','+str(cover)+'\n'
     file_object = open('sample.txt', 'a')
     file_object.write(data)
     file_object.close()
@@ -64,7 +95,7 @@ def engine():
     mkdir = os.path.dirname(os.path.realpath(__file__))+"/*.pdf"
     names = [os.path.basename(x) for x in glob.glob(str(mkdir))]
     file_object = open('sample.txt', 'a')
-    file_object.write('firm,year,score_pos,score_neg,score_pol,score_sub,covered\n')
+    file_object.write('firm,year,score,number_pages,number_words,covered\n')
     file_object.close()
     for j in names:
         sample(j)
