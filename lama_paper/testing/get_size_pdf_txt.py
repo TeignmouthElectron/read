@@ -27,9 +27,6 @@ def get_text(path: str) -> list:
     object = PyPDF2.PdfReader(str(path))
     #numpages = object.getNumPages()
     numpages = len(object.pages)
-    if object.is_encrypted: 
-    	print('files is encrypted'+str(path))
-    print('Is it encrypted?'+str(object.is_encrypted))
     analysed = 0
     final = ''
     for i in range(0, numpages):
