@@ -22,6 +22,7 @@ def score(text: str) -> float:
     #CHANGE THIS TO GET DIFFERENT SCORES
     y = textstat.flesch_reading_ease(text)
     #y = textstat.gunning_fog(text)
+    #y = textstat.flesch_kincaid_grade(text)
 
     #THIS IS USING THE OLD LIBRARY
     #r = Readability(text)
@@ -42,15 +43,15 @@ def get_text(path: str) -> None:
     scoring = []
     grading = []
 
-    object = PyPDF2.PdfFileReader(str(path))
+    object = PyPDF2.PdfReader(str(path))
     # gEt the # of pages
-    numpages = object.getNumPages()
+    numpages = len(object.pages)
     analysed = 0
     for i in range(0, numpages):
-        pageobj = object.getPage(i)
-        if pageobj.getContents()==None:
+        pageobj = object.pages[i]
+        if pageobj.get_contents()==None:
             continue
-        text = pageobj.extractText()
+        text = pageobj.extract_text()
         if len(text.split())>100:
             #print(len(text.split()))
             #print(Readability(text).analyzedVars['word_cnt'])

@@ -28,15 +28,15 @@ def get_text(path: str) -> list:
     '''
     This will transform the pdf into text capable of the Readability library to read it
     '''
-    object = PyPDF2.PdfFileReader(str(path))
-    numpages = object.getNumPages()
+    object = PyPDF2.PdfReader(str(path))
+    numpages = len(object.pages)
     analysed = 0
     final = ''
     for i in range(0, numpages):
-        pageobj = object.getPage(i)
-        if pageobj.getContents()==None:
+        pageobj = object.pages[i]
+        if pageobj.get_contents()==None:
             continue
-        final += str(pageobj.extractText())
+        final += str(pageobj.extract_text())
         analysed += 1
     if numpages==0:
         cover=0
@@ -52,6 +52,8 @@ def read_score(text: str) -> float:
         try:
             y = textstat.flesch_reading_ease(text)
             #y = textstat.gunning_fog(text)
+            #y = textstat.flesch_kincaid_grade(text)
+            #y = textstat.char_count(text, ignore_spaces=True)
 
             #THIS IS USING THE OLD LIBRARY
             #r = Readability(text)
