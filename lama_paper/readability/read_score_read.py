@@ -44,6 +44,11 @@ def get_text(path: str) -> list:
         cover = (analysed/numpages)*100
     return [final,cover,numpages] 
 
+
+
+
+
+
 def read_score(text: str) -> float:
     # this has the try becauce sometimes even if it has more than 100 words the code is unable to yield a score
     # PLEASE CHECK THIS INDIVIDUAL CASES IN DETAIL.
