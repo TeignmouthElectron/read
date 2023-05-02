@@ -25,13 +25,21 @@ Readme:
 
 """
 
+UNIQUE = True #False
+
+
 def sent(text: str) -> dict:
     word_dict = utils.Lm_dict()
+    # to add the complex words dictionary
+    word_dict['complex'] = utils.complex()
+    #
     tokens = utils.tokenize(text)
     score = {}
     score['Total'] = len(tokens)
     for j in word_dict.keys():
         match = [i for i in tokens if i in word_dict[j]]
+        if UNIQUE:
+            match = list(set(match))
         score[j] = len(match)  
     return score
 
@@ -56,7 +64,7 @@ def sample(path: str) -> None:
     score = list((sent(y[0])).values())
     name, year = baptise(path)
     print('[+] '+str(name)+' '+str(year)+'___covered:'+str(cover))
-    data = str(name)+','+str(year)+','+str(score[0])+','+str(score[1])+','+str(score[2])+','+str(score[3])+','+str(score[4])+','+str(score[5])+','+str(score[6])+','+str(score[7])+','+str(cover)+'\n'
+    data = str(name)+','+str(year)+','+str(score[0])+','+str(score[1])+','+str(score[2])+','+str(score[3])+','+str(score[4])+','+str(score[5])+','+str(score[6])+','+str(score[7])+','+str(score[8])+','+str(cover)+'\n'
     file_object = open('sample.txt', 'a')
     file_object.write(data)
     file_object.close()
@@ -66,7 +74,7 @@ def engine():
     mkdir = os.path.dirname(os.path.realpath(__file__))+"/*.pdf"
     names = [os.path.basename(x) for x in glob.glob(str(mkdir))]
     file_object = open('sample.txt', 'a')
-    file_object.write('firm,year,total,neg,pos,uncertainty,litigious,strong,weak,constraining,covered\n')
+    file_object.write('firm,year,total,neg,pos,uncertainty,litigious,strong,weak,constraining,complex,covered\n')
     file_object.close()
     for j in names:
         sample(j)
