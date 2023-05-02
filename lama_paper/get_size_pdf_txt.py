@@ -4,45 +4,11 @@ import numpy as np
 import re
 import os
 import glob
+from utils import get_text
 """
 [ ] makes the .txt files based on the text of the pdfs
 [ ] returns .txt files named as FIRM_YEAR.txt and the sample_size.txt (with pdf and txt megabytes for each firm_year obs)
 """
-
-
-
-def get_text(path: str) -> list:
-    '''
-    This will get the text from pdf by page and return text and document percentage covered
-
-    Args:
-        path (string): the pdf file location
-
-    Returns:
-        list[
-            final (string): txt that PyPDF2 was able to extract
-            cover (float): document percentage covered]
-    '''
-    #object = PyPDF2.PdfFileReader(str(path))
-    object = PyPDF2.PdfReader(str(path))
-    #numpages = object.getNumPages()
-    numpages = len(object.pages)
-    analysed = 0
-    final = ''
-    for i in range(0, numpages):
-        #pageobj = object.getPage(i)
-        pageobj = object.pages[i]
-        #if pageobj.getContents()==None:
-        if pageobj.get_contents()==None:
-            continue
-        #final += str(pageobj.extractText())
-        final += str(pageobj.extract_text())
-        analysed += 1
-    if numpages==0:
-        cover=0
-    else:
-        cover = (analysed/numpages)*100
-    return [final,cover] 
 
 def baptise(path: str) -> str:
     '''
